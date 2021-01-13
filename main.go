@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Doc.ai and/or its affiliates.
+// Copyright (c) 2020-2021 Doc.ai and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -43,13 +43,12 @@ import (
 
 // Config is configuration for cmd-registry-memory
 type Config struct {
-	Namespace        string        `default:"default" desc:"namespace where is deployed registry-k8s instance" split_words:"true"`
-	ListenOn         []url.URL     `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
-	ProxyRegistryURL url.URL       `desc:"url to the proxy registry that handles this domain" split_words:"true"`
-	ExpirePeriod     time.Duration `default:"1s" desc:"period to check expired NSEs" split_words:"true"`
+	registryk8s.Config
+	ListenOn []url.URL `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
 }
 
 func main() {
+	var config = new(Config)
 	// Setup context to catch signals
 	ctx := signalctx.WithSignals(context.Background())
 	ctx, cancel := context.WithCancel(ctx)
@@ -71,7 +70,6 @@ func main() {
 	startTime := time.Now()
 
 	// Get config from environment
-	config := &Config{}
 	if err := envconfig.Usage("registry_k8s", config); err != nil {
 		logrus.Fatal(err)
 	}
@@ -100,7 +98,11 @@ func main() {
 	clientOptions := append(spanhelper.WithTracingDial(), grpc.WithBlock(), grpc.WithTransportCredentials(credsTLS))
 
 	client, _, _ := k8s.NewVersionedClient()
-	registryk8s.NewServer(ctx, config.Namespace, client, &config.ProxyRegistryURL, clientOptions...).Register(server)
+
+	config.ClientSet = client
+	config.ChainCtx = ctx
+
+	registryk8s.NewServer(&config.Config, clientOptions...).Register(server)
 
 	for i := 0; i < len(config.ListenOn); i++ {
 		srvErrCh := grpcutils.ListenAndServe(ctx, &config.ListenOn[i], server)
