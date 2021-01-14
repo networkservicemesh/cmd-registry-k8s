@@ -378,8 +378,8 @@ github.com/networkservicemesh/api v0.0.0-20210112152104-45029fb10e27 h1:J0UPj3sY
 github.com/networkservicemesh/api v0.0.0-20210112152104-45029fb10e27/go.mod h1:qvxdY1Zt4QTtiG+uH1XmjpegeHjlt5Jj4A8iK55iJPI=
 github.com/networkservicemesh/sdk v0.0.0-20210113103247-8c04922e9e48 h1:jJjD1GvUdezDPN1GqJ7TDPLwYgql9r253RKZ1uX0Srs=
 github.com/networkservicemesh/sdk v0.0.0-20210113103247-8c04922e9e48/go.mod h1:LV9NIA44LDUs0moEnrfeeRKQPA3Qdu3JiBhSwzEbXSM=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20210113143211-ad51344325f9 h1:6fw3pIYiNKJP7SeH2cvMbOSdLjSxQXPY3WjE3zkay2o=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20210113143211-ad51344325f9/go.mod h1:2QNS3pa8dkEQYZjmqeSX+tH2PoJi1CboMe7hyEp27t0=
+github.com/networkservicemesh/sdk-k8s v0.0.0-20210114055057-20038f43631f h1:90JaNUC1va/HKTK1gfI4H6EYMXI7arrHsymewHF4lck=
+github.com/networkservicemesh/sdk-k8s v0.0.0-20210114055057-20038f43631f/go.mod h1:2QNS3pa8dkEQYZjmqeSX+tH2PoJi1CboMe7hyEp27t0=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e h1:fD57ERR4JtEqsWbfPhv4DMiApHyliiK5xCTNVSPiaAs=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nishanths/exhaustive v0.0.0-20200811152831-6cf413ae40e0/go.mod h1:wBEpHwM2OdmeNpdCvRPUlkEbBuaFmcK4Wv8Q7FuGW3c=
