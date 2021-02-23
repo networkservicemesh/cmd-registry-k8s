@@ -5,8 +5,8 @@ go 1.15
 require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/sdk v0.0.0-20210221205140-52ca5f7f0cf6
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20210221205618-e7ffa385f3d7
+	github.com/networkservicemesh/sdk v0.0.0-20210223153748-9007c4530373
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20210223154754-ca0216566890
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0-beta.4
 	google.golang.org/grpc v1.35.0
