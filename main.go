@@ -20,6 +20,8 @@ import (
 	"context"
 	"net/url"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
@@ -52,7 +54,15 @@ func main() {
 	var config = new(Config)
 	// Setup context to catch signals
 	ctx := signalctx.WithSignals(context.Background())
-	ctx, cancel := context.WithCancel(ctx)
+	ctx, cancel := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+		// More Linux signals here
+		syscall.SIGHUP,
+		syscall.SIGTERM,
+		syscall.SIGQUIT,
+	)
+	defer cancel()
 
 	// Setup logging
 	logrus.SetFormatter(&nested.Formatter{})

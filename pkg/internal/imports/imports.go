@@ -21,5 +21,7 @@ import (
 	_ "google.golang.org/grpc/credentials"
 	_ "net/url"
 	_ "os"
+	_ "os/signal"
+	_ "syscall"
 	_ "time"
 )
