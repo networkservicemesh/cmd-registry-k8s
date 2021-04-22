@@ -41,7 +41,6 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
-	"github.com/networkservicemesh/sdk/pkg/tools/signalctx"
 )
 
 // Config is configuration for cmd-registry-memory
@@ -53,7 +52,6 @@ type Config struct {
 func main() {
 	var config = new(Config)
 	// Setup context to catch signals
-	ctx := signalctx.WithSignals(context.Background())
 	ctx, cancel := signal.NotifyContext(
 		context.Background(),
 		os.Interrupt,
