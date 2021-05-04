@@ -1,5 +1,7 @@
 // Copyright (c) 2020 Cisco and/or its affiliates.
 //
+// Copyright (c) 2021 Doc.ai and/or its affiliates.
+//
 // SPDX-License-Identifier: Apache-2.0
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,5 +18,6 @@
 
 package imports
 
-//go:generate bash -c "cd $(mktemp -d) && GO111MODULE=on go get github.com/edwarnicke/imports-gen@v1.0.0"
-//go:generate ${GOPATH}/bin/imports-gen
+//go:generate bash -c "rm -rf imports*.go"
+//go:generate bash -c "cd $(mktemp -d) && GO111MODULE=on go get github.com/edwarnicke/imports-gen@v1.1.0"
+//go:generate bash -c "GOOS=linux ${GOPATH}/bin/imports-gen"

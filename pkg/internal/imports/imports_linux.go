@@ -13,7 +13,6 @@ import (
 	_ "github.com/networkservicemesh/sdk/pkg/tools/log"
 	_ "github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 	_ "github.com/networkservicemesh/sdk/pkg/tools/opentracing"
-	_ "github.com/networkservicemesh/sdk/pkg/tools/signalctx"
 	_ "github.com/sirupsen/logrus"
 	_ "github.com/spiffe/go-spiffe/v2/spiffetls/tlsconfig"
 	_ "github.com/spiffe/go-spiffe/v2/workloadapi"
