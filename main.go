@@ -24,6 +24,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/edwarnicke/grpcfd"
+
 	"github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
 	"github.com/networkservicemesh/sdk/pkg/tools/jaeger"
@@ -105,8 +107,18 @@ func main() {
 	serverOptions := append(opentracing.WithTracing(), grpc.Creds(credsTLS))
 	server := grpc.NewServer(serverOptions...)
 
-	clientOptions := append(opentracing.WithTracingDial(), grpc.WithBlock(), grpc.WithTransportCredentials(credsTLS))
-
+	clientOptions := append(
+		opentracing.WithTracingDial(),
+		grpc.WithBlock(),
+		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
+		grpc.WithTransportCredentials(
+			grpcfd.TransportCredentials(
+				credentials.NewTLS(
+					tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny()),
+				),
+			),
+		),
+	)
 	client, _, _ := k8s.NewVersionedClient()
 
 	config.ClientSet = client
