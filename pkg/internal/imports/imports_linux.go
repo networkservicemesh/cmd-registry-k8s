@@ -4,6 +4,7 @@ package imports
 import (
 	_ "context"
 	_ "github.com/antonfisher/nested-logrus-formatter"
+	_ "github.com/edwarnicke/grpcfd"
 	_ "github.com/kelseyhightower/envconfig"
 	_ "github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
 	_ "github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
