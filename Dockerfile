@@ -23,4 +23,4 @@ CMD dlv -l :40000 --headless=true --api-version=2 test -test.v ./...
 
 FROM alpine as runtime
 COPY --from=build /bin/cmd-registry-k8s /bin/cmd-registry-k8s
-CMD /bin/cmd-registry-k8s
+ENTRYPOINT [ "/bin/cmd-registry-k8s" ]
