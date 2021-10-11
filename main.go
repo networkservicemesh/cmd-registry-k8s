@@ -51,6 +51,7 @@ import (
 type Config struct {
 	registryk8s.Config
 	ListenOn []url.URL `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
+	LogLevel string    `default:"INFO" desc:"Log level" split_words:"true"`
 }
 
 func main() {
@@ -91,6 +92,11 @@ func main() {
 		logrus.Fatalf("error processing config from env: %+v", err)
 	}
 
+	l, err := logrus.ParseLevel(config.LogLevel)
+	if err != nil {
+		logrus.Fatalf("invalid log level %s", config.LogLevel)
+	}
+	logrus.SetLevel(l)
 	log.FromContext(ctx).Infof("Config: %#v", config)
 
 	// Get a X509Source
