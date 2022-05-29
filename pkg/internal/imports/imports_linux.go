@@ -3,6 +3,7 @@ package imports
 
 import (
 	_ "context"
+	_ "crypto/tls"
 	_ "github.com/antonfisher/nested-logrus-formatter"
 	_ "github.com/edwarnicke/grpcfd"
 	_ "github.com/kelseyhightower/envconfig"
