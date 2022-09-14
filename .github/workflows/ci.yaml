@@ -16,7 +16,7 @@ jobs:
     uses: networkservicemesh/.github/.github/workflows/shellcheck.yaml@main
 
   golangci-lint:
-    uses: networkservicemesh/.github/.github/workflows/golangci-lint.yaml@main
+    uses: NikitaSkrynnik/.github/.github/workflows/golangci-lint.yaml@linter-template
     with:
       linter-version: v1.49.0
 
