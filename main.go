@@ -137,11 +137,7 @@ func main() {
 		grpc.WithBlock(),
 		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
 		grpc.WithTransportCredentials(
-			grpcfd.TransportCredentials(
-				credentials.NewTLS(
-					tlsClientConfig,
-				),
-			),
+			grpcfd.TransportCredentials(credentials.NewTLS(tlsClientConfig)),
 		),
 	)
 	client, _, _ := k8s.NewVersionedClient()
