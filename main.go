@@ -147,9 +147,9 @@ func main() {
 
 	registryk8s.NewServer(
 		&config.Config,
+		registryk8s.WithAuthorizeNSERegistryServer(authorize.NewNetworkServiceEndpointRegistryServer(authorize.Any())),
+		registryk8s.WithAuthorizeNSRegistryServer(authorize.NewNetworkServiceRegistryServer(authorize.Any())),
 		registryk8s.WithDialOptions(clientOptions...),
-		registryk8s.WithAuthorizeNSERegistryServer(authorize.NewNetworkServiceEndpointRegistryServer()),
-		registryk8s.WithAuthorizeNSRegistryServer(authorize.NewNetworkServiceRegistryServer()),
 	).Register(server)
 
 	for i := 0; i < len(config.ListenOn); i++ {
