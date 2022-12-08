@@ -34,6 +34,8 @@ import (
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
+	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
+	"github.com/networkservicemesh/sdk/pkg/tools/token"
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
 
 	nested "github.com/antonfisher/nested-logrus-formatter"
@@ -53,9 +55,10 @@ import (
 // Config is configuration for cmd-registry-memory
 type Config struct {
 	registryk8s.Config
-	ListenOn              []url.URL `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
-	LogLevel              string    `default:"INFO" desc:"Log level" split_words:"true"`
-	OpenTelemetryEndpoint string    `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
+	ListenOn              []url.URL     `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
+	MaxTokenLifetime      time.Duration `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
+	LogLevel              string        `default:"INFO" desc:"Log level" split_words:"true"`
+	OpenTelemetryEndpoint string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
 }
 
 func main() {
@@ -135,10 +138,15 @@ func main() {
 	clientOptions := append(
 		tracing.WithTracingDial(),
 		grpc.WithBlock(),
-		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
+		grpc.WithDefaultCallOptions(
+			grpc.WaitForReady(true),
+			grpc.PerRPCCredentials(token.NewPerRPCCredentials(spiffejwt.TokenGeneratorFunc(source, config.MaxTokenLifetime))),
+		),
 		grpc.WithTransportCredentials(
 			grpcfd.TransportCredentials(credentials.NewTLS(tlsClientConfig)),
 		),
+		grpcfd.WithChainStreamInterceptor(),
+		grpcfd.WithChainUnaryInterceptor(),
 	)
 	client, _, _ := k8s.NewVersionedClient()
 
@@ -147,8 +155,11 @@ func main() {
 
 	registryk8s.NewServer(
 		&config.Config,
-		registryk8s.WithAuthorizeNSERegistryServer(authorize.NewNetworkServiceEndpointRegistryServer(authorize.Any())),
-		registryk8s.WithAuthorizeNSRegistryServer(authorize.NewNetworkServiceRegistryServer(authorize.Any())),
+		spiffejwt.TokenGeneratorFunc(source, config.MaxTokenLifetime),
+		registryk8s.WithAuthorizeNSERegistryServer(authorize.NewNetworkServiceEndpointRegistryServer()),
+		registryk8s.WithAuthorizeNSERegistryClient(authorize.NewNetworkServiceEndpointRegistryClient()),
+		registryk8s.WithAuthorizeNSRegistryServer(authorize.NewNetworkServiceRegistryServer()),
+		registryk8s.WithAuthorizeNSRegistryClient(authorize.NewNetworkServiceRegistryClient()),
 		registryk8s.WithDialOptions(clientOptions...),
 	).Register(server)
 
