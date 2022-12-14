@@ -33,6 +33,7 @@ import (
 	"github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/authorize"
+	"github.com/networkservicemesh/sdk/pkg/tools/opa"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
 	"github.com/networkservicemesh/sdk/pkg/tools/token"
@@ -52,13 +53,14 @@ import (
 	"github.com/networkservicemesh/sdk/pkg/tools/log/logruslogger"
 )
 
-// Config is configuration for cmd-registry-memory
+// Config is configuration for cmd-registry-k8s
 type Config struct {
 	registryk8s.Config
-	ListenOn              []url.URL     `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
-	MaxTokenLifetime      time.Duration `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
-	LogLevel              string        `default:"INFO" desc:"Log level" split_words:"true"`
-	OpenTelemetryEndpoint string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
+	ListenOn              []url.URL        `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
+	MaxTokenLifetime      time.Duration    `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
+	RegistryPolicies      []opa.PolicyPath `default:"policies/prev_token_signed.rego,policies/tokens_chained.rego,policies/tokens_expired.rego,policies/tokens_valid.rego,policies/registry_client_allowed.rego"`
+	LogLevel              string           `default:"INFO" desc:"Log level" split_words:"true"`
+	OpenTelemetryEndpoint string           `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
 }
 
 func main() {
@@ -92,6 +94,17 @@ func main() {
 	}
 	if err := envconfig.Process("registry_k8s", config); err != nil {
 		logrus.Fatalf("error processing config from env: %+v", err)
+	}
+
+	log.FromContext(ctx).Info("policies array: %v", config.RegistryPolicies)
+	policies := make([]authorize.Policy, 0)
+	for _, path := range config.RegistryPolicies {
+		policy, err := path.Read()
+		if err == nil {
+			policies = append(policies, policy)
+		} else {
+			logrus.Errorf("failed to ready policy: %s", path)
+		}
 	}
 
 	l, err := logrus.ParseLevel(config.LogLevel)
@@ -154,10 +167,10 @@ func main() {
 	registryk8s.NewServer(
 		&config.Config,
 		spiffejwt.TokenGeneratorFunc(source, config.MaxTokenLifetime),
-		registryk8s.WithAuthorizeNSERegistryServer(authorize.NewNetworkServiceEndpointRegistryServer()),
-		registryk8s.WithAuthorizeNSERegistryClient(authorize.NewNetworkServiceEndpointRegistryClient()),
-		registryk8s.WithAuthorizeNSRegistryServer(authorize.NewNetworkServiceRegistryServer()),
-		registryk8s.WithAuthorizeNSRegistryClient(authorize.NewNetworkServiceRegistryClient()),
+		registryk8s.WithAuthorizeNSERegistryServer(authorize.NewNetworkServiceEndpointRegistryServer(authorize.WithPolicies(policies...))),
+		registryk8s.WithAuthorizeNSERegistryClient(authorize.NewNetworkServiceEndpointRegistryClient(authorize.WithPolicies(policies...))),
+		registryk8s.WithAuthorizeNSRegistryServer(authorize.NewNetworkServiceRegistryServer(authorize.WithPolicies(policies...))),
+		registryk8s.WithAuthorizeNSRegistryClient(authorize.NewNetworkServiceRegistryClient(authorize.WithPolicies(policies...))),
 		registryk8s.WithDialOptions(clientOptions...),
 	).Register(server)
 
