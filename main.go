@@ -55,10 +55,12 @@ import (
 // Config is configuration for cmd-registry-memory
 type Config struct {
 	registryk8s.Config
-	ListenOn              []url.URL     `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
-	MaxTokenLifetime      time.Duration `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
-	LogLevel              string        `default:"INFO" desc:"Log level" split_words:"true"`
-	OpenTelemetryEndpoint string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
+	ListenOn               []url.URL     `default:"unix:///listen.on.socket" desc:"url to listen on." split_words:"true"`
+	MaxTokenLifetime       time.Duration `default:"10m" desc:"maximum lifetime of tokens" split_words:"true"`
+	RegistryServerPolicies []string      `default:"etc/nsm/opa/common/.*.rego,etc/nsm/opa/registry/.*.rego,etc/nsm/opa/server/.*.rego" desc:"paths to files and directories that contain registry server policies" split_words:"true"`
+	RegistryClientPolicies []string      `default:"etc/nsm/opa/common/.*.rego,etc/nsm/opa/registry/.*.rego,etc/nsm/opa/client/.*.rego" desc:"paths to files and directories that contain registry client policies" split_words:"true"`
+	LogLevel               string        `default:"INFO" desc:"Log level" split_words:"true"`
+	OpenTelemetryEndpoint  string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
 }
 
 func main() {
@@ -154,10 +156,10 @@ func main() {
 	registryk8s.NewServer(
 		&config.Config,
 		spiffejwt.TokenGeneratorFunc(source, config.MaxTokenLifetime),
-		registryk8s.WithAuthorizeNSERegistryServer(authorize.NewNetworkServiceEndpointRegistryServer()),
-		registryk8s.WithAuthorizeNSERegistryClient(authorize.NewNetworkServiceEndpointRegistryClient()),
-		registryk8s.WithAuthorizeNSRegistryServer(authorize.NewNetworkServiceRegistryServer()),
-		registryk8s.WithAuthorizeNSRegistryClient(authorize.NewNetworkServiceRegistryClient()),
+		registryk8s.WithAuthorizeNSERegistryServer(authorize.NewNetworkServiceEndpointRegistryServer(authorize.WithPolicies(config.RegistryServerPolicies...))),
+		registryk8s.WithAuthorizeNSERegistryClient(authorize.NewNetworkServiceEndpointRegistryClient(authorize.WithPolicies(config.RegistryClientPolicies...))),
+		registryk8s.WithAuthorizeNSRegistryServer(authorize.NewNetworkServiceRegistryServer(authorize.WithPolicies(config.RegistryServerPolicies...))),
+		registryk8s.WithAuthorizeNSRegistryClient(authorize.NewNetworkServiceRegistryClient(authorize.WithPolicies(config.RegistryClientPolicies...))),
 		registryk8s.WithDialOptions(clientOptions...),
 	).Register(server)
 
