@@ -6,8 +6,8 @@ require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/grpcfd v1.1.2
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/sdk v0.5.1-0.20221215123931-9709ed4b3fb8
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20221215124604-aa6adb94559d
+	github.com/networkservicemesh/sdk v0.5.1-0.20221219125240-465077a59741
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20221219130452-0350b7db25f0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0
 	google.golang.org/grpc v1.49.0
@@ -68,10 +68,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.9.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90 // indirect
-	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/net v0.4.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
-	golang.org/x/sys v0.2.0 // indirect
-	golang.org/x/term v0.2.0 // indirect
+	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/term v0.3.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
