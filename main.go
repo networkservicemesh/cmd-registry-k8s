@@ -89,10 +89,10 @@ func main() {
 	startTime := time.Now()
 
 	// Get config from environment
-	if err := envconfig.Usage("registry_k8s", config); err != nil {
+	if err := envconfig.Usage("nsm", config); err != nil {
 		logrus.Fatal(err)
 	}
-	if err := envconfig.Process("registry_k8s", config); err != nil {
+	if err := envconfig.Process("nsm", config); err != nil {
 		logrus.Fatalf("error processing config from env: %+v", err)
 	}
 
