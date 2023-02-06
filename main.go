@@ -1,5 +1,7 @@
 // Copyright (c) 2020-2022 Doc.ai and/or its affiliates.
 //
+// Copyright (c) 2023 Cisco and/or its affiliates.
+//
 // SPDX-License-Identifier: Apache-2.0
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +34,7 @@ import (
 
 	"github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
+	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s/client/clientset/versioned"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
@@ -61,6 +64,7 @@ type Config struct {
 	RegistryClientPolicies []string      `default:"etc/nsm/opa/common/.*.rego,etc/nsm/opa/registry/.*.rego,etc/nsm/opa/client/.*.rego" desc:"paths to files and directories that contain registry client policies" split_words:"true"`
 	LogLevel               string        `default:"INFO" desc:"Log level" split_words:"true"`
 	OpenTelemetryEndpoint  string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
+	KubeletQPS             int           `default:"10" desc:"kubelet config settings" split_words:"true"`
 }
 
 func main() {
@@ -148,7 +152,9 @@ func main() {
 		grpcfd.WithChainStreamInterceptor(),
 		grpcfd.WithChainUnaryInterceptor(),
 	)
-	client, _, _ := k8s.NewVersionedClient()
+
+	// Adjust config and create ClietSet
+	client, _ := newVersionedClient(config)
 
 	config.ClientSet = client
 	config.ChainCtx = ctx
@@ -185,4 +191,11 @@ func exitOnErr(ctx context.Context, cancel context.CancelFunc, errCh <-chan erro
 		log.FromContext(ctx).Error(err)
 		cancel()
 	}(ctx, errCh)
+}
+
+func newVersionedClient(config *Config) (*versioned.Clientset, error) {
+	k8sConfig, _ := k8s.NewClientSetConfig()
+	k8sConfig.QPS = float32(config.KubeletQPS)
+	k8sConfig.Burst = config.KubeletQPS * 2
+	return versioned.NewForConfig(k8sConfig)
 }
