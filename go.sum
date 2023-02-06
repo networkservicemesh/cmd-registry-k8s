@@ -237,10 +237,10 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/networkservicemesh/api v1.7.2-0.20230123083145-4a6c3ec589e1 h1:RxNKksXsXsnDsEo+Cfn43pdPfML024ad//QcdKfgXK4=
 github.com/networkservicemesh/api v1.7.2-0.20230123083145-4a6c3ec589e1/go.mod h1:hOF2844BSstH1311oDMDgqqXS+kdc77htZNPRKl9mf8=
-github.com/networkservicemesh/sdk v0.5.1-0.20230127103858-f45a84eaed48 h1:BD9XnFCRrGQRblBvEx1fPBtt2Ndjrn8wyVRwIry2Xts=
-github.com/networkservicemesh/sdk v0.5.1-0.20230127103858-f45a84eaed48/go.mod h1:kKXpCya5Ps0JWUuguUjRB5l4i5vk29C381JEE67eDqs=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20230127105051-195ad51f0649 h1:4LknE3X7Oor46zkaoGaa6PevIO8DgyilNrTVoLiktkk=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20230127105051-195ad51f0649/go.mod h1:wkXAoTEc5ZZjyHJImquWZnaDNxR3eDRi6k7uETZV2vY=
+github.com/networkservicemesh/sdk v0.5.1-0.20230206093411-51ab81ff82a6 h1:t40hMdPmnm7py/OU0gk+JGQdgCVW2HwQ/iGHyXaoLO8=
+github.com/networkservicemesh/sdk v0.5.1-0.20230206093411-51ab81ff82a6/go.mod h1:kKXpCya5Ps0JWUuguUjRB5l4i5vk29C381JEE67eDqs=
+github.com/networkservicemesh/sdk-k8s v0.0.0-20230206094406-f5f011a77765 h1:WTAhzsnKdYyIr6qdd0F//z50OCx440rW2DekP/dnmMI=
+github.com/networkservicemesh/sdk-k8s v0.0.0-20230206094406-f5f011a77765/go.mod h1:CkjtfIS7hED8tf2YdifnbfEeS4ekPfV7IOdMvAFPiiQ=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/open-policy-agent/opa v0.44.0 h1:sEZthsrWBqIN+ShTMJ0Hcz6a3GkYsY4FaB2S/ou2hZk=
 github.com/open-policy-agent/opa v0.44.0/go.mod h1:YpJaFIk5pq89n/k72c1lVvfvR5uopdJft2tMg1CW/yU=
