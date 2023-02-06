@@ -9,6 +9,7 @@ import (
 	_ "github.com/kelseyhightower/envconfig"
 	_ "github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
 	_ "github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
+	_ "github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s/client/clientset/versioned"
 	_ "github.com/networkservicemesh/sdk/pkg/registry/common/authorize"
 	_ "github.com/networkservicemesh/sdk/pkg/tools/debug"
 	_ "github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
