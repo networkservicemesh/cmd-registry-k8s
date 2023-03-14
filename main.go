@@ -29,12 +29,18 @@ import (
 	"time"
 
 	"github.com/edwarnicke/grpcfd"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+	"github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
+	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s/client/clientset/versioned"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/authorize"
+	"github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
+
+	registryclient "github.com/networkservicemesh/sdk/pkg/registry/chains/client"
 
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/kelseyhightower/envconfig"
@@ -157,8 +163,70 @@ func main() {
 		exitOnErr(ctx, cancel, srvErrCh)
 	}
 
+	log.FromContext(ctx).Info("Starting prefetch...")
+	prefetch(ctx, source, client, config)
+
 	log.FromContext(ctx).Infof("Startup completed in %v", time.Since(startTime))
+
 	<-ctx.Done()
+}
+
+func prefetch(ctx context.Context, source *workloadapi.X509Source, k8sClient versioned.Interface, cfg *Config) {
+
+	logger := log.FromContext(ctx).WithField("registry-k8s", "prefetch")
+
+	tlsClientConfig := tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())
+	tlsClientConfig.MinVersion = tls.VersionTLS12
+	tlsServerConfig := tlsconfig.MTLSServerConfig(source, source, tlsconfig.AuthorizeAny())
+	tlsServerConfig.MinVersion = tls.VersionTLS12
+
+	clientOptions := append(
+		tracing.WithTracingDial(),
+		grpc.WithBlock(),
+		grpc.WithDefaultCallOptions(grpc.WaitForReady(true)),
+		grpc.WithTransportCredentials(
+			grpcfd.TransportCredentials(
+				credentials.NewTLS(tlsClientConfig))),
+	)
+
+	if len(cfg.ListenOn) == 0 {
+		logger.Warn("missed listen on in the env configuration. Prefetch is skipped")
+		return
+	}
+
+	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx,
+		registryclient.WithClientURL(&url.URL{Scheme: cfg.ListenOn[0].Scheme, Host: "localhost:" + cfg.ListenOn[0].Port()}),
+		registryclient.WithDialOptions(clientOptions...),
+		registryclient.WithNSEAdditionalFunctionality(
+			sendfd.NewNetworkServiceEndpointRegistryClient(),
+		),
+	)
+
+	nses, err := k8sClient.NetworkservicemeshV1().NetworkServiceEndpoints(cfg.Namespace).List(ctx, v1.ListOptions{})
+
+	if err != nil {
+		logger.Warnf("something went wrong on fetcing nse list: %v", err.Error())
+		return
+	}
+
+	for _, nse := range nses.Items {
+		if nse.Spec.ExpirationTime.AsTime().Local().After(time.Now()) {
+			logger.Infof("found a leaked nse '%v', trying to delete...", nse.Name)
+
+			if err = k8sClient.NetworkservicemeshV1().NetworkServiceEndpoints(cfg.Namespace).Delete(ctx, nse.Name, v1.DeleteOptions{}); err != nil {
+				logger.Warnf("something went wrong on deleting nse: %v, err: %v", nse.Name, err.Error())
+				continue
+			}
+			logger.Infof("lekead nse '%v' has been deleted", nse.Name)
+			continue
+		}
+		logger.Infof("found a not expired nse '%v', trying to register...", nse.Name)
+		if _, err = registryClient.Register(ctx, (*registry.NetworkServiceEndpoint)(&nse.Spec)); err != nil {
+			logger.Warnf("something went wrong on registering nse: %v, err: %v", nse.Name, err.Error())
+			continue
+		}
+		logger.Infof("not expired nse '%v' from the etcd has been successfully managed", nse.Name)
+	}
 }
 
 func exitOnErr(ctx context.Context, cancel context.CancelFunc, errCh <-chan error) {
