@@ -1,4 +1,4 @@
-// Copyright (c) 2020-2022 Doc.ai and/or its affiliates.
+// Copyright (c) 2020-2023 Doc.ai and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -36,11 +36,14 @@ import (
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s/client/clientset/versioned"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/authorize"
-	"github.com/networkservicemesh/sdk/pkg/registry/common/sendfd"
+	"github.com/networkservicemesh/sdk/pkg/registry/common/begin"
+	"github.com/networkservicemesh/sdk/pkg/registry/common/clientconn"
+	"github.com/networkservicemesh/sdk/pkg/registry/common/clienturl"
+	"github.com/networkservicemesh/sdk/pkg/registry/common/connect"
+	"github.com/networkservicemesh/sdk/pkg/registry/common/dial"
+	"github.com/networkservicemesh/sdk/pkg/registry/common/retry"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
 	"github.com/networkservicemesh/sdk/pkg/tools/tracing"
-
-	registryclient "github.com/networkservicemesh/sdk/pkg/registry/chains/client"
 
 	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/kelseyhightower/envconfig"
@@ -50,6 +53,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
+	"github.com/networkservicemesh/sdk/pkg/registry/core/chain"
 	"github.com/networkservicemesh/sdk/pkg/tools/debug"
 	"github.com/networkservicemesh/sdk/pkg/tools/grpcutils"
 	"github.com/networkservicemesh/sdk/pkg/tools/log"
@@ -172,7 +176,6 @@ func main() {
 }
 
 func prefetch(ctx context.Context, source *workloadapi.X509Source, k8sClient versioned.Interface, cfg *Config) {
-
 	logger := log.FromContext(ctx).WithField("registry-k8s", "prefetch")
 
 	tlsClientConfig := tlsconfig.MTLSClientConfig(source, source, tlsconfig.AuthorizeAny())
@@ -194,12 +197,15 @@ func prefetch(ctx context.Context, source *workloadapi.X509Source, k8sClient ver
 		return
 	}
 
-	registryClient := registryclient.NewNetworkServiceEndpointRegistryClient(ctx,
-		registryclient.WithClientURL(&url.URL{Scheme: cfg.ListenOn[0].Scheme, Host: "localhost:" + cfg.ListenOn[0].Port()}),
-		registryclient.WithDialOptions(clientOptions...),
-		registryclient.WithNSEAdditionalFunctionality(
-			sendfd.NewNetworkServiceEndpointRegistryClient(),
+	registryClient := chain.NewNetworkServiceEndpointRegistryClient(
+		begin.NewNetworkServiceEndpointRegistryClient(),
+		retry.NewNetworkServiceEndpointRegistryClient(ctx),
+		clienturl.NewNetworkServiceEndpointRegistryClient(&url.URL{Scheme: cfg.ListenOn[0].Scheme, Host: "localhost:" + cfg.ListenOn[0].Port()}),
+		clientconn.NewNetworkServiceEndpointRegistryClient(),
+		dial.NewNetworkServiceEndpointRegistryClient(ctx,
+			dial.WithDialOptions(clientOptions...),
 		),
+		connect.NewNetworkServiceEndpointRegistryClient(),
 	)
 
 	nses, err := k8sClient.NetworkservicemeshV1().NetworkServiceEndpoints(cfg.Namespace).List(ctx, v1.ListOptions{})
@@ -209,8 +215,9 @@ func prefetch(ctx context.Context, source *workloadapi.X509Source, k8sClient ver
 		return
 	}
 
-	for _, nse := range nses.Items {
-		if nse.Spec.ExpirationTime.AsTime().Local().After(time.Now()) {
+	for i := 0; i < len(nses.Items); i++ {
+		nse := &nses.Items[i]
+		if nse.Spec.ExpirationTime.AsTime().Local().Before(time.Now()) {
 			logger.Infof("found a leaked nse '%v', trying to delete...", nse.Name)
 
 			if err = k8sClient.NetworkservicemeshV1().NetworkServiceEndpoints(cfg.Namespace).Delete(ctx, nse.Name, v1.DeleteOptions{}); err != nil {
@@ -220,7 +227,7 @@ func prefetch(ctx context.Context, source *workloadapi.X509Source, k8sClient ver
 			logger.Infof("lekead nse '%v' has been deleted", nse.Name)
 			continue
 		}
-		logger.Infof("found a not expired nse '%v', trying to register...", nse.Name)
+		logger.Infof("found a not expired nse '%v', trying to manage it...", nse.Name)
 		if _, err = registryClient.Register(ctx, (*registry.NetworkServiceEndpoint)(&nse.Spec)); err != nil {
 			logger.Warnf("something went wrong on registering nse: %v, err: %v", nse.Name, err.Error())
 			continue
