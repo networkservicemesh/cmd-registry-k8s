@@ -30,6 +30,8 @@ import (
 
 	"github.com/edwarnicke/grpcfd"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/watch"
+	"k8s.io/client-go/kubernetes"
 
 	"github.com/networkservicemesh/api/pkg/api/registry"
 	"github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
@@ -150,7 +152,7 @@ func main() {
 			grpcfd.TransportCredentials(credentials.NewTLS(tlsClientConfig)),
 		),
 	)
-	client, _, _ := k8s.NewVersionedClient()
+	client, conf, _ := k8s.NewVersionedClient()
 
 	config.ClientSet = client
 	config.ChainCtx = ctx
@@ -166,13 +168,49 @@ func main() {
 		srvErrCh := grpcutils.ListenAndServe(ctx, &config.ListenOn[i], server)
 		exitOnErr(ctx, cancel, srvErrCh)
 	}
-
 	log.FromContext(ctx).Info("Starting prefetch...")
 	prefetch(ctx, source, client, config)
+
+	k8sClient, _ := kubernetes.NewForConfig(conf)
+
+	go monitorForNodesChange(ctx, k8sClient, func(ctx context.Context) {
+		prefetch(ctx, source, client, config)
+	})
 
 	log.FromContext(ctx).Infof("Startup completed in %v", time.Since(startTime))
 
 	<-ctx.Done()
+}
+
+func monitorForNodesChange(ctx context.Context, k8sClient kubernetes.Interface, onNodesChangeFn func(context.Context)) {
+	logger := log.FromContext(ctx).WithField("registry-k8s", "monitorForNodesChange")
+	watcher, err := k8sClient.CoreV1().Nodes().Watch(ctx, v1.ListOptions{})
+	if err != nil {
+		logger.Warnf("cannot allocate watcher: %v", err.Error())
+		return
+	}
+
+	for ctx.Err() == nil {
+		select {
+		case event, ok := <-watcher.ResultChan():
+			if !ok {
+				watcher.Stop()
+				watcher, err = k8sClient.CoreV1().Nodes().Watch(ctx, v1.ListOptions{})
+				if err != nil {
+					logger.Warnf("cannot allocate watcher: %v", err.Error())
+					return
+				}
+				continue
+			}
+			if event.Type == watch.Deleted {
+				onNodesChangeFn(ctx)
+			}
+			continue
+		case <-ctx.Done():
+			watcher.Stop()
+			return
+		}
+	}
 }
 
 func prefetch(ctx context.Context, source *workloadapi.X509Source, k8sClient versioned.Interface, cfg *Config) {
