@@ -31,6 +31,8 @@ import (
 	_ "google.golang.org/grpc"
 	_ "google.golang.org/grpc/credentials"
 	_ "k8s.io/apimachinery/pkg/apis/meta/v1"
+	_ "k8s.io/apimachinery/pkg/watch"
+	_ "k8s.io/client-go/kubernetes"
 	_ "net/url"
 	_ "os"
 	_ "os/signal"
