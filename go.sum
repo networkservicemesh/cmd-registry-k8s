@@ -148,10 +148,10 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/networkservicemesh/api v1.10.1-0.20230822145124-c4a3ece88804 h1:RDbdWrIi+QL4ZKI45ETcT81Ox9DZPl083vDcFqY5AnI=
 github.com/networkservicemesh/api v1.10.1-0.20230822145124-c4a3ece88804/go.mod h1:DO7D13Y4x/A8tQ2cQyUWa9o5wi7XHUB8+vITWRKreCc=
-github.com/networkservicemesh/sdk v0.5.1-0.20230922100610-97bacd7153a2 h1:zucewg+R+ik42Nc2r0MaUzz8kuGh4cJNZU1UqSbmQR0=
-github.com/networkservicemesh/sdk v0.5.1-0.20230922100610-97bacd7153a2/go.mod h1:KzbOZkk84r6KMNESKb50DpIWqxqCA88Mb+2jFrAdBJs=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20230919044941-eae83db21370 h1:jKysgZcxOW6PexOX1BMyFhI6xwUh1VNxnbWeuDbMq5Q=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20230919044941-eae83db21370/go.mod h1:cy5jQDgSXvy2+Dmwd61wfRlvBF07lA23pPTJ46zmWmw=
+github.com/networkservicemesh/sdk v0.5.1-0.20230928095228-256d2ccfaf72 h1:kHxDNU5ePuHH7MZceMc1G3dAZueUk1gSu3Rb5fhvFf4=
+github.com/networkservicemesh/sdk v0.5.1-0.20230928095228-256d2ccfaf72/go.mod h1:KzbOZkk84r6KMNESKb50DpIWqxqCA88Mb+2jFrAdBJs=
+github.com/networkservicemesh/sdk-k8s v0.0.0-20230928141340-a06239569412 h1:+bwQ0ojOamgIc9IumcbMhEOvVXqhHCuVeVvl9niujkM=
+github.com/networkservicemesh/sdk-k8s v0.0.0-20230928141340-a06239569412/go.mod h1:lB4AYU1hdDEeyO2aIKb18/HaNcgtbII80qaBZ+7FXSM=
 github.com/onsi/ginkgo/v2 v2.9.4 h1:xR7vG4IXt5RWx6FfIjyAtsoMAtnc3C/rFXBBd2AjZwE=
 github.com/onsi/gomega v1.27.6 h1:ENqfyGeS5AX/rlXDd/ETokDz93u0YufY1Pgxuy/PvWE=
 github.com/open-policy-agent/opa v0.44.0 h1:sEZthsrWBqIN+ShTMJ0Hcz6a3GkYsY4FaB2S/ou2hZk=
@@ -165,8 +165,8 @@ github.com/prometheus/client_golang v1.16.0/go.mod h1:Zsulrv/L9oM40tJ7T815tM89lF
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/prometheus/client_model v0.4.0 h1:5lQXD3cAg1OXBf4Wq03gTrXHeaV0TQvGfUooCfx1yqY=
 github.com/prometheus/client_model v0.4.0/go.mod h1:oMQmHW1/JoDwqLtg57MGgP/Fb1CJEYF2imWWhWtMkYU=
-github.com/prometheus/common v0.42.0 h1:EKsfXEYo4JpWMHH5cg+KOUWeuJSov1Id8zGR8eeI1YM=
-github.com/prometheus/common v0.42.0/go.mod h1:xBwqVerjNdUDjgODMpudtOMwlOwf2SaTr1yjz4b7Zbc=
+github.com/prometheus/common v0.44.0 h1:+5BrQJwiBB9xsMygAB3TNvpQKOwlkc25LbISbrdOOfY=
+github.com/prometheus/common v0.44.0/go.mod h1:ofAIvZbQ1e/nugmZGz4/qCb9Ap1VoSTIO7x0VV9VvuY=
 github.com/prometheus/procfs v0.10.1 h1:kYK1Va/YMlutzCGazswoHKo//tZVlFpKYh+PymziUAg=
 github.com/prometheus/procfs v0.10.1/go.mod h1:nwNm2aOCAYw8uTR/9bWRREkZFxAUcWzPHWJq+XBB/FM=
 github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 h1:N/ElC8H3+5XpJzTSTfLsJV/mx9Q9g7kxmchpfZyxgzM=
