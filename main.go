@@ -66,7 +66,7 @@ type Config struct {
 	OpenTelemetryEndpoint  string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
 	MetricsExportInterval  time.Duration `default:"10s" desc:"interval between mertics exports" split_words:"true"`
 	// The QPS value is calculated for 40 NSEs, 40 NSCs and 5 FWDs.
-	// NSC and NSE refreshes occur every second
+	// NSC, FWD and NSE refreshes occur every second
 	// NSE Refreshes: 1 refresh per sec. 				* 40 nses
 	// FWD Refreshes: 1 refresh per sec. 				* 5 fwds
 	// NSC Refreshes: 4 finds (in 1 refresh) per sec. 	* 40 nscs
