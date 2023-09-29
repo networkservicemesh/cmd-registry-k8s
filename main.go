@@ -65,7 +65,13 @@ type Config struct {
 	LogLevel               string        `default:"INFO" desc:"Log level" split_words:"true"`
 	OpenTelemetryEndpoint  string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
 	MetricsExportInterval  time.Duration `default:"10s" desc:"interval between mertics exports" split_words:"true"`
-	KubeletQPS             int           `default:"10" desc:"kubelet config settings" split_words:"true"`
+	// The QPS value is calculated for 40 NSEs, 40 NSCs and 5 FWDs.
+	// NSC and NSE refreshes occur every second
+	// NSE Refreshes: 1 refresh per sec. 				* 40 nses
+	// FWD Refreshes: 1 refresh per sec. 				* 5 fwds
+	// NSC Refreshes: 4 finds (in 1 refresh) per sec. 	* 40 nscs
+	// Total:											= 205
+	KubeletQPS int `default:"205" desc:"kubelet config settings" split_words:"true"`
 }
 
 func main() {
