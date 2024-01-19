@@ -1,6 +1,6 @@
 // Copyright (c) 2020-2022 Doc.ai and/or its affiliates.
 //
-// Copyright (c) 2023 Cisco and/or its affiliates.
+// Copyright (c) 2023-2024 Cisco and/or its affiliates.
 //
 // SPDX-License-Identifier: Apache-2.0
 //
@@ -34,7 +34,6 @@ import (
 
 	"github.com/networkservicemesh/sdk-k8s/pkg/registry/chains/registryk8s"
 	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s"
-	"github.com/networkservicemesh/sdk-k8s/pkg/tools/k8s/client/clientset/versioned"
 	"github.com/networkservicemesh/sdk/pkg/registry/common/authorize"
 	"github.com/networkservicemesh/sdk/pkg/tools/opentelemetry"
 	"github.com/networkservicemesh/sdk/pkg/tools/spiffejwt"
@@ -160,8 +159,13 @@ func main() {
 		grpcfd.WithChainUnaryInterceptor(),
 	)
 
-	// Adjust config and create ClietSet
-	client, _ := newVersionedClient(config)
+	// Adjust config and create ClientSet
+	client, _, err := k8s.NewVersionedClient(
+		k8s.WithQPS(float32(config.KubeletQPS)),
+		k8s.WithBurst(config.KubeletQPS*2))
+	if err != nil {
+		logrus.Fatalf("error creating NewVersionedClient: %+v", err)
+	}
 
 	config.ClientSet = client
 	config.ChainCtx = ctx
@@ -198,11 +202,4 @@ func exitOnErr(ctx context.Context, cancel context.CancelFunc, errCh <-chan erro
 		log.FromContext(ctx).Error(err)
 		cancel()
 	}(ctx, errCh)
-}
-
-func newVersionedClient(config *Config) (*versioned.Clientset, error) {
-	k8sConfig, _ := k8s.NewClientSetConfig()
-	k8sConfig.QPS = float32(config.KubeletQPS)
-	k8sConfig.Burst = config.KubeletQPS * 2
-	return versioned.NewForConfig(k8sConfig)
 }
