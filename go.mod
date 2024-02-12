@@ -6,8 +6,8 @@ require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/grpcfd v1.1.2
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/sdk v0.5.1-0.20240205110352-f37b863ccb82
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20240209093153-06cbd4d2ce3d
+	github.com/networkservicemesh/sdk v0.5.1-0.20240212105149-b1a3e26da857
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20240212105709-087f48f6a37a
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spiffe/go-spiffe/v2 v2.0.0
 	google.golang.org/grpc v1.59.0
