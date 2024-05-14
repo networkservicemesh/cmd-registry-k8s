@@ -62,7 +62,7 @@ type Config struct {
 	RegistryServerPolicies []string      `default:"etc/nsm/opa/common/.*.rego,etc/nsm/opa/registry/.*.rego,etc/nsm/opa/server/.*.rego" desc:"paths to files and directories that contain registry server policies" split_words:"true"`
 	RegistryClientPolicies []string      `default:"etc/nsm/opa/common/.*.rego,etc/nsm/opa/registry/.*.rego,etc/nsm/opa/client/.*.rego" desc:"paths to files and directories that contain registry client policies" split_words:"true"`
 	LogLevel               string        `default:"INFO" desc:"Log level" split_words:"true"`
-	OpenTelemetryEndpoint  string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint"`
+	OpenTelemetryEndpoint  string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint" split_words:"true"`
 	MetricsExportInterval  time.Duration `default:"10s" desc:"interval between mertics exports" split_words:"true"`
 	// The QPS value is calculated for 40 NSEs, 40 NSCs and 5 FWDs.
 	// NSC, FWD and NSE refreshes occur every second
