@@ -24,6 +24,8 @@ package main
 import (
 	"context"
 	"crypto/tls"
+	"net/http"
+	"net/http/pprof"
 	"net/url"
 	"os"
 	"os/signal"
@@ -64,6 +66,8 @@ type Config struct {
 	LogLevel               string        `default:"INFO" desc:"Log level" split_words:"true"`
 	OpenTelemetryEndpoint  string        `default:"otel-collector.observability.svc.cluster.local:4317" desc:"OpenTelemetry Collector Endpoint" split_words:"true"`
 	MetricsExportInterval  time.Duration `default:"10s" desc:"interval between mertics exports" split_words:"true"`
+	PprofEnabled           bool          `default:"false" desc:"is pprof enabled" split_words:"true"`
+	PprofPort              string        `default:"6060" desc:"pprof port" split_words:"true"`
 	// The QPS value is calculated for 40 NSEs, 40 NSCs and 5 FWDs.
 	// NSC, FWD and NSE refreshes occur every second
 	// NSE Refreshes: 1 refresh per sec. 				* 40 nses
@@ -122,6 +126,28 @@ func main() {
 		defer func() {
 			if err = o.Close(); err != nil {
 				log.FromContext(ctx).Error(err.Error())
+			}
+		}()
+	}
+
+	// Configure pprof
+	if config.PprofEnabled {
+		log.FromContext(ctx).Infof("Profiler is enabled. Listening on %s", config.PprofPort)
+		mux := http.NewServeMux()
+		mux.HandleFunc("/debug/pprof/", pprof.Index)
+		mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+		mux.HandleFunc("/debug/pprof/profile", pprof.Profile)
+		mux.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+		mux.HandleFunc("/debug/pprof/trace", pprof.Trace)
+		server := &http.Server{
+			Addr:         "localhost:" + config.PprofPort,
+			Handler:      mux,
+			ReadTimeout:  10 * time.Second,
+			WriteTimeout: 10 * time.Second,
+		}
+		go func() {
+			if err = server.ListenAndServe(); err != nil {
+				log.FromContext(ctx).Errorf("Failed to start profiler: %s", err.Error())
 			}
 		}()
 	}
