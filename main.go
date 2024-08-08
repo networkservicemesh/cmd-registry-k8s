@@ -91,6 +91,9 @@ func main() {
 	logrus.SetFormatter(&nested.Formatter{})
 	ctx = log.WithLog(ctx, logruslogger.New(ctx, map[string]interface{}{"cmd": os.Args[0]}))
 
+	// Start profiling server
+	startProfiler(ctx)
+
 	// Debug self if necessary
 	if err := debug.Self(); err != nil {
 		log.FromContext(ctx).Infof("%s", err)
