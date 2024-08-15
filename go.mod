@@ -6,8 +6,8 @@ require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
 	github.com/edwarnicke/grpcfd v1.1.4
 	github.com/kelseyhightower/envconfig v1.4.0
-	github.com/networkservicemesh/sdk v0.5.1-0.20240814134105-78bedfb4371f
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20240814134600-f9f55b43a657
+	github.com/networkservicemesh/sdk v0.5.1-0.20240815204907-eeb0114b9426
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20240815205359-2f6c43d4f381
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spiffe/go-spiffe/v2 v2.1.7
 	google.golang.org/grpc v1.60.1
@@ -49,7 +49,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/networkservicemesh/api v1.13.4-0.20240814093907-03f6633c2677 // indirect
+	github.com/networkservicemesh/api v1.13.4-0.20240815101554-fdbfcd84fd0e // indirect
 	github.com/open-policy-agent/opa v0.44.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.17.0 // indirect
