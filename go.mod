@@ -97,3 +97,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.2 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
+
+replace github.com/networkservicemesh/sdk-k8s => github.com/Nordix/nsm-sdk-k8s v0.0.0-20251113152832-9325a9754198

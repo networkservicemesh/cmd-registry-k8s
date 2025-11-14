@@ -2,6 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
+github.com/Nordix/nsm-sdk-k8s v0.0.0-20251113152832-9325a9754198 h1:Axi9W9UenoYlxZm6WV8AiO3voW0YlW0+OyvmknBJ38g=
+github.com/Nordix/nsm-sdk-k8s v0.0.0-20251113152832-9325a9754198/go.mod h1:Vccs7cf9uE1fdfmQxb/DFyu6iiEe7dchJ+tMCAAGtgQ=
 github.com/OneOfOne/xxhash v1.2.8 h1:31czK/TI9sNkxIKfaUfGlU47BAxQ0ztGgd9vPyqimf8=
 github.com/OneOfOne/xxhash v1.2.8/go.mod h1:eZbhyaAYD41SGSSsnmcpxVoRiQ/MPUTjUdIIOT9Um7Q=
 github.com/agnivade/levenshtein v1.2.1 h1:EHBY3UOn1gwdy/VbFwgo4cxecRznFk7fKWN1KOX7eoM=
@@ -151,8 +153,6 @@ github.com/networkservicemesh/api v1.15.0-rc.1.0.20250625083423-2e0c8496e4e3 h1:
 github.com/networkservicemesh/api v1.15.0-rc.1.0.20250625083423-2e0c8496e4e3/go.mod h1:AciGKdCuOxSBSch22q/jlPqwhLy5tU8B41cwqMb8MPI=
 github.com/networkservicemesh/sdk v0.5.1-0.20250716141930-3185db764c2f h1:jAS8y30kwn3rBIi94lxEexkgDZ+Uq2Xe3rkQxLs2Duk=
 github.com/networkservicemesh/sdk v0.5.1-0.20250716141930-3185db764c2f/go.mod h1:36STFyy5ykl+16R75GXqArMXWA3yh3fZWecEsv9zOQI=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20250716142500-665385153948 h1:iGIuDKBPAyFsuMbFQrdRdk6P1poWXN0Jv/21ab9rZX8=
-github.com/networkservicemesh/sdk-k8s v0.0.0-20250716142500-665385153948/go.mod h1:lm04Y1jsis6BQFHV06FmoN2FiSOdD+5D8ZdeyndOj78=
 github.com/onsi/ginkgo/v2 v2.21.0 h1:7rg/4f3rB88pb5obDgNZrNHrQ4e6WpjonchcpuBRnZM=
 github.com/onsi/ginkgo/v2 v2.21.0/go.mod h1:7Du3c42kxCUegi0IImZ1wUQzMBVecgIHjR1C+NkhLQo=
 github.com/onsi/gomega v1.35.1 h1:Cwbd75ZBPxFSuZ6T+rN/WCb/gOc6YgFBXLlZLhC7Ds4=
