@@ -9,7 +9,7 @@ require (
 	github.com/edwarnicke/grpcfd v1.1.4
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/networkservicemesh/sdk v0.5.1-0.20251121154018-e4918b795f91
-	github.com/networkservicemesh/sdk-k8s v0.0.0-20251121154614-6aeecb59fe4a
+	github.com/networkservicemesh/sdk-k8s v0.0.0-20251127092809-ce51d8fc69ad
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spiffe/go-spiffe/v2 v2.1.7
 	google.golang.org/grpc v1.71.1
